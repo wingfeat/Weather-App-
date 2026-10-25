@@ -1,4 +1,3 @@
-// webpack.config.js
 import path from "node:path";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 
@@ -13,11 +12,6 @@ export default {
   devtool: "eval-source-map",
   devServer: {
     watchFiles: ["./src/template.html"],
-  },
-  scripts: {
-    build: "webpack",
-    dev: "webpack serve",
-    deploy: "git subtree push --prefix dist origin gh-pages",
   },
   plugins: [
     new HtmlWebpackPlugin({

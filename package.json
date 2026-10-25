@@ -1,5 +1,6 @@
 {
-  "name": "odin-restaurant-page-",
+  "name": "odin-project",
+  "private" : true,
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
