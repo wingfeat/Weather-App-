@@ -1,4 +1,5 @@
 import { returnWeatherInfos } from "./app";
+import { format, parseISO } from "date-fns";
 
 const weatherContainer = document.querySelector(".weather-container");
 const nextDaysContainer = document.querySelector(".next-days-container");
@@ -16,6 +17,13 @@ function makeElement(tag, text, css) {
   if (css) element.classList.add(css);
 
   return element;
+}
+
+function formatDate(dateTime) {
+  const date = parseISO(dateTime);
+  const textDate = format(date, "E dd MMM");
+
+  return textDate;
 }
 
 export function setupWeatherInfos() {
@@ -57,7 +65,11 @@ export function renderWeatherInfos(city) {
 
   weatherContainer.append(
     makeElement("p", city.description, "current-description"),
-    makeElement("p", city.dateTime, "current-date"),
+    makeElement(
+      "p",
+      `Updated at: ${city.dateTime.slice(0, -3)}`,
+      "current-date",
+    ),
     makeElement("p", formatTemp(city.temperature), "current-temp"),
     makeElement("p", city.icon, "current-icon"),
   );
@@ -70,7 +82,7 @@ export function renderWeatherInfos(city) {
     div.classList.add(`${day.icon}`);
 
     div.append(
-      makeElement("p", day.dateTime, "day-date"),
+      makeElement("p", formatDate(day.dateTime), "day-date"),
       makeElement("p", day.description, "day-description"),
       makeElement("p", `Max: ${formatTemp(day.tempMax)}`, "day-max"),
       makeElement("p", `Min: ${formatTemp(day.tempMin)}`, "day-min"),
