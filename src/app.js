@@ -20,14 +20,12 @@ export async function returnWeatherInfos(city) {
   const cityInfos = await getWeatherInfos(city);
   if (cityInfos === undefined) return;
 
-  console.log(cityInfos);
-
   const cityObject = {
     name: cityInfos.resolvedAddress,
     description: cityInfos.description,
     icon: cityInfos.currentConditions.icon,
     dateTime: cityInfos.currentConditions.datetime,
-    currentTemperature: cityInfos.currentConditions.temp,
+    temperature: cityInfos.currentConditions.temp,
     uvIndex: cityInfos.currentConditions.uvindex,
     nextDays: cityInfos.days.slice(0, 5).map((day) => ({
       dateTime: day.datetime,
