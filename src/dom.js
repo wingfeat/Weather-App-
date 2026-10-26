@@ -3,6 +3,8 @@ import { returnWeatherInfos } from "./app";
 const weatherContainer = document.querySelector(".weather-container");
 const nextDaysContainer = document.querySelector(".next-days-container");
 const weatherContainerTitle = document.createElement("h1");
+weatherContainer.appendChild(weatherContainerTitle);
+
 const btnUnit = document.getElementById("unit");
 let unit = "°C";
 let lastCity;
@@ -27,9 +29,14 @@ export function setupWeatherInfos() {
     const city = await returnWeatherInfos(searchCity);
 
     if (!city) {
+      lastCity = undefined;
+      weatherContainer.replaceChildren();
+      nextDaysContainer.replaceChildren();
+      weatherContainer.appendChild(weatherContainerTitle);
       weatherContainerTitle.textContent = "Unfound result";
       return;
     }
+
     lastCity = city;
     formCity.reset();
     renderWeatherInfos(city);
@@ -37,31 +44,33 @@ export function setupWeatherInfos() {
 }
 
 export function renderWeatherInfos(city) {
-  weatherContainerTitle.textContent = city.name;
+  weatherContainerTitle.textContent = city.name.toUpperCase();
   weatherContainer.replaceChildren();
   nextDaysContainer.replaceChildren();
   weatherContainer.appendChild(weatherContainerTitle);
 
+  weatherContainer.classList.add(city.icon);
+
   weatherContainer.append(
-    makeElement("p", city.description),
-    makeElement("p", city.dateTime),
-    makeElement("p", formatTemp(city.temperature)),
-    makeElement("p", city.icon),
+    makeElement("p", city.description, "current-description"),
+    makeElement("p", city.dateTime, "current-date"),
+    makeElement("p", formatTemp(city.temperature, "current-temp")),
+    makeElement("p", city.icon, "current-icon"),
   );
 
   nextDaysContainer.append(makeElement("h2", "Forecast for the next days"));
 
   for (const day of city.nextDays) {
     const div = document.createElement("div");
+    div.classList.add("day-card");
+    div.classList.add(`${day.icon}`);
 
     div.append(
-      makeElement("p", day.dateTime),
-      makeElement("p", day.description),
-      makeElement("span", day.icon),
-      makeElement("p", day.preciptype),
-      makeElement("p", formatTemp(day.tempMax)),
-      makeElement("p", formatTemp(day.tempMin)),
-      makeElement("p", day.uvIndex),
+      makeElement("p", day.dateTime, "day-date"),
+      makeElement("p", day.description, "day-description"),
+      makeElement("p", `Max: ${formatTemp(day.tempMax)}`, "day-max"),
+      makeElement("p", `Min: ${formatTemp(day.tempMin)}`, "day-min"),
+      makeElement("p", `UV index: ${day.uvIndex}`, "day-uv"),
     );
     nextDaysContainer.appendChild(div);
   }
@@ -78,7 +87,9 @@ function formatTemp(celsius) {
 
 export function setupUnit() {
   btnUnit.addEventListener("click", () => {
-    if (lastCity === undefined) return;
+    if (lastCity === undefined) {
+      return;
+    }
 
     if (btnUnit.textContent === "°F") {
       unit = "°F";
