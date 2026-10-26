@@ -3,11 +3,12 @@ import { returnWeatherInfos } from "./app";
 const weatherContainer = document.querySelector(".weather-container");
 const nextDaysContainer = document.querySelector(".next-days-container");
 const weatherContainerTitle = document.createElement("h1");
-weatherContainer.appendChild(weatherContainerTitle);
-
+const loader = document.querySelector(".loader");
 const btnUnit = document.getElementById("unit");
 let unit = "°C";
 let lastCity;
+
+weatherContainer.appendChild(weatherContainerTitle);
 
 function makeElement(tag, text, css) {
   const element = document.createElement(tag);
@@ -26,7 +27,9 @@ export function setupWeatherInfos() {
     const searchCity = document.getElementById("searchInput").value.trim();
     if (searchCity.length === 0) return;
 
+    loader.hidden = false;
     const city = await returnWeatherInfos(searchCity);
+    loader.hidden = true;
 
     if (!city) {
       lastCity = undefined;
@@ -34,6 +37,7 @@ export function setupWeatherInfos() {
       nextDaysContainer.replaceChildren();
       weatherContainer.appendChild(weatherContainerTitle);
       weatherContainerTitle.textContent = "Unfound result";
+      weatherContainer.className = "weather-container";
       return;
     }
 
@@ -49,12 +53,12 @@ export function renderWeatherInfos(city) {
   nextDaysContainer.replaceChildren();
   weatherContainer.appendChild(weatherContainerTitle);
 
-  weatherContainer.classList.add(city.icon);
+  weatherContainer.className = `weather-container ${city.icon}`;
 
   weatherContainer.append(
     makeElement("p", city.description, "current-description"),
     makeElement("p", city.dateTime, "current-date"),
-    makeElement("p", formatTemp(city.temperature, "current-temp")),
+    makeElement("p", formatTemp(city.temperature), "current-temp"),
     makeElement("p", city.icon, "current-icon"),
   );
 
