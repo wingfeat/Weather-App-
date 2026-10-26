@@ -39,12 +39,20 @@ export function renderWeatherInfos(city) {
     makeElement("p", city.icon),
   );
 
-  nextDaysContainer.append(makeElement("h2", "Previsions for next few days"));
+  nextDaysContainer.append(makeElement("h2", "Forecast for the next days"));
 
   for (const day of city.nextDays) {
     const div = document.createElement("div");
 
-    div.append(makeElement("p", day.description));
+    div.append(
+      makeElement("p", day.dateTime),
+      makeElement("p", day.description),
+      makeElement("span", day.icon),
+      makeElement("p", day.preciptype),
+      makeElement("p", day.tempMax),
+      makeElement("p", day.tempMin),
+      makeElement("p", day.uvIndex),
+    );
     nextDaysContainer.appendChild(div);
   }
 }
@@ -52,6 +60,7 @@ export function renderWeatherInfos(city) {
 function makeElement(tag, text, css) {
   const element = document.createElement(tag);
   element.textContent = text;
-  element.classList.add(css);
+  if (css) element.classList.add(css);
+
   return element;
 }
