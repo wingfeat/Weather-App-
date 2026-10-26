@@ -3,7 +3,7 @@ import { returnWeatherInfos } from "./app";
 const weatherContainer = document.querySelector(".weather-container");
 const nextDaysContainer = document.querySelector(".next-days-container");
 const weatherContainerTitle = document.createElement("h1");
-const btnUnity = document.getElementById("unity");
+const btnUnit = document.getElementById("unit");
 let unit = "°C";
 let lastCity;
 
@@ -20,29 +20,27 @@ export function setupWeatherInfos() {
 
   formCity.addEventListener("submit", async (event) => {
     event.preventDefault();
-    weatherContainer.replaceChildren();
-    nextDaysContainer.replaceChildren();
-    weatherContainer.appendChild(weatherContainerTitle);
 
     const searchCity = document.getElementById("searchInput").value.trim();
     if (searchCity.length === 0) return;
 
     const city = await returnWeatherInfos(searchCity);
-    console.log(city);
 
     if (!city) {
       weatherContainerTitle.textContent = "Unfound result";
       return;
     }
-
+    lastCity = city;
     formCity.reset();
     renderWeatherInfos(city);
-    lastCity = city;
   });
 }
 
 export function renderWeatherInfos(city) {
   weatherContainerTitle.textContent = city.name;
+  weatherContainer.replaceChildren();
+  nextDaysContainer.replaceChildren();
+  weatherContainer.appendChild(weatherContainerTitle);
 
   weatherContainer.append(
     makeElement("p", city.description),
@@ -76,4 +74,20 @@ function formatTemp(celsius) {
     celsius = Math.round(celsius) + unit;
   }
   return celsius;
+}
+
+export function setupUnit() {
+  btnUnit.addEventListener("click", () => {
+    if (lastCity === undefined) return;
+
+    if (btnUnit.textContent === "°F") {
+      unit = "°F";
+      btnUnit.textContent = "°C";
+      renderWeatherInfos(lastCity);
+    } else {
+      unit = "°C";
+      btnUnit.textContent = "°F";
+      renderWeatherInfos(lastCity);
+    }
+  });
 }
